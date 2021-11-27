@@ -44,6 +44,10 @@ class App(tk.Tk):
 
         self.rowconfigure(0, weight=6)
         self.rowconfigure(1, weight=0)
+        self.resizable(False, False)
+        self.title("Old Currency Converter - 2")
+        self.iconbitmap("icon.ico")
+
 
         main_frame = MainFrame(self)
         main_frame.grid(column=0, row=0)

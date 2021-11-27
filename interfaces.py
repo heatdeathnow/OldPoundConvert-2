@@ -98,7 +98,7 @@ class ConvertValueToCoin(ttk.Frame):
         self.result_label.grid(column=0, row=3, columnspan=2, pady=10, sticky=tk.W)
 
         # conversion button
-        self.button = ttk.Button(self, text='convert', command=self.display)
+        self.button = ttk.Button(self, text='Convert', command=self.display)
         self.button.grid(column=1, row=2, pady=20, ipadx=5, ipady=5)
 
     def display(self):
@@ -146,7 +146,7 @@ class ConvertCoinsToValue(ttk.Frame):
         self.result_label = ttk.Label(self)
         self.result_label.grid(column=2, row=1001, pady=5)
 
-        self.button = ttk.Button(self, text='convert', command=self.display)
+        self.button = ttk.Button(self, text='Convert', command=self.display)
         self.button.grid(column=2, row=1000, padx=10)
 
     def display(self):
@@ -196,7 +196,7 @@ class SimplifyCoin(ttk.Frame):
         self.result_label = ttk.Label(self)
         self.result_label.grid(column=0, row=2, padx=5, pady=5)
 
-        self.button = ttk.Button(self, text='simplify', command=self.simplify)
+        self.button = ttk.Button(self, text='Simplify', command=self.simplify)
         self.button.grid(column=0, row=1, padx=5, pady=5)
 
     def simplify(self):
@@ -241,7 +241,7 @@ class SimplifyValue(ttk.Frame):
         self.result_label = ttk.Label(self)
         self.result_label.grid(column=1, row=3, padx=5, pady=5)
 
-        self.button = ttk.Button(self, text='simplify', command=self.simplify)
+        self.button = ttk.Button(self, text='Simplify', command=self.simplify)
         self.button.grid(column=1, row=2, padx=5, pady=5)
 
     def simplify(self):
