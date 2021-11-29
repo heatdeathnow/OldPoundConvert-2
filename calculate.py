@@ -1,39 +1,23 @@
 # The calculations are done in farthings. That is in quarters of pence.
-denomination = (('Guinea', 1008),
-                ('Sovereign', 960),
-                ('Half Guinea', 504),
-                ('Half Sovereign', 480),
-                ('Crown', 240),
-                ('Half Crown', 120),
-                ('Florin', 96),
-                ('Shilling', 48),
-                ('Sixpence', 24),
-                ('Groat', 16),
-                ('Threepence', 12),
-                ('Penny', 4),
-                ('Half Penny', 2),
-                ('Farthing', 1))
+denomination = [['Guinea', 1008, True],
+                ['Sovereign', 960, True],
+                ['Half Guinea', 504, True],
+                ['Half Sovereign', 480, True],
+                ['Crown', 240, True],
+                ['Half Crown', 120, True],
+                ['Florin', 96, True],
+                ['Shilling', 48, True],
+                ['Sixpence', 24, True],
+                ['Groat', 16, True],
+                ['Threepence', 12, True],
+                ['Penny', 4, True],
+                ['Half Penny', 2, True],
+                ['Farthing', 1, True]]
 
 # Value of the pound, shilling and pence in farthings.
 exchange = (('£', 960),
             ('s', 48),
             ('d', 4))
-
-# Enabled coins from the settings.
-enabled = (('Guinea', 1008),
-           ('Sovereign', 960),
-           ('Half Guinea', 504),
-           ('Half Sovereign', 480),
-           ('Crown', 240),
-           ('Half Crown', 120),
-           ('Florin', 96),
-           ('Shilling', 48),
-           ('Sixpence', 24),
-           ('Groat', 16),
-           ('Threepence', 12),
-           ('Penny', 4),
-           ('Half Penny', 2),
-           ('Farthing', 1))
 
 
 def lowest_denomination(pounds=0, shillings=0, pence=0):
@@ -85,7 +69,6 @@ def farthings_to_readable(farthings):
     shillings = str(shillings)
 
     while farthings >= exchange[2][1]:
-
         pence += 1
         farthings -= exchange[2][1]
     pence = str(pence)

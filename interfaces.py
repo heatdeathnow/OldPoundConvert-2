@@ -122,15 +122,16 @@ class ConvertCoinsToValue(ttk.Frame):
         count = 0
         self.entry = []
         self.label = []
-        for coin in calculate.enabled:
-            self.inner_frame = ttk.Frame(self)
-            self.label.append(ttk.Label(self.inner_frame, text=calculate.enabled[count][0]))
-            self.entry.append(ttk.Entry(self.inner_frame))
-            self.label[count].pack()
-            self.entry[count].pack()
+        for coin in calculate.denomination:
+            if coin[2]:  # If the coin is enabled
+                self.inner_frame = ttk.Frame(self)
+                self.label.append(ttk.Label(self.inner_frame, text=coin[0]))
+                self.entry.append(ttk.Entry(self.inner_frame))
+                self.label[count].pack()
+                self.entry[count].pack()
 
-            self.inner_frames.append(self.inner_frame)
-            count += 1
+                self.inner_frames.append(self.inner_frame)
+                count += 1
 
 
         count = 0
@@ -171,15 +172,16 @@ class SimplifyCoin(ttk.Frame):
         count = 0
         self.entry = []
         self.label = []
-        for coin in calculate.enabled:
-            inner_frame = ttk.Frame(self.fake_frame)
-            self.label.append(ttk.Label(inner_frame, text=calculate.enabled[count][0]))
-            self.entry.append(ttk.Entry(inner_frame))
-            self.label[count].pack()
-            self.entry[count].pack()
+        for coin in calculate.denomination:
+            if coin[2]:
+                inner_frame = ttk.Frame(self.fake_frame)
+                self.label.append(ttk.Label(inner_frame, text=calculate.denomination[count][0]))
+                self.entry.append(ttk.Entry(inner_frame))
+                self.label[count].pack()
+                self.entry[count].pack()
 
-            self.inner_frames.append(inner_frame)
-            count += 1
+                self.inner_frames.append(inner_frame)
+                count += 1
 
         count = 0
         column_count = 0
@@ -250,3 +252,43 @@ class SimplifyValue(ttk.Frame):
         readable = calculate.farthings_to_readable(farthings)
 
         self.result_label['text'] = readable
+
+
+class Settings(ttk.Frame):
+
+    def toggle(self, coin):
+        count = 0
+        print(coin)
+
+        for thing in calculate.denomination:
+            if coin == thing:
+                calculate.denomination[count][2] = not calculate.denomination[count][2]
+            count += 1
+
+        self.buttons[count - 1]['text'] = f"Disable {coin[0]}" if calculate.denomination[count - 1][2] \
+            else f"Enable {coin[0]}"
+
+    def __init__(self, root):
+        super().__init__(root)
+
+        count = 0
+        self.buttons = []
+        for coin in calculate.denomination:
+
+            if coin[2]:
+                a = coin.copy()
+                self.buttons.append(ttk.Button(self, text=f"Disable {coin[0]}", command=lambda: self.toggle(a)))
+            else:
+                self.buttons.append(ttk.Button(self, text=f"Enable {coin[0]}", command=lambda: self.toggle(coin.copy())))
+            count += 1
+
+        row_count = 0
+        column_count = 0
+        for button in self.buttons:
+            button.grid(column=column_count, row=row_count, padx=5, pady=5, sticky=tk.W)
+            row_count += 1
+
+            if row_count == 6:
+                column_count += 1
+                row_count = 0
+
