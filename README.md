@@ -11,7 +11,7 @@ Changed the incorrect fraction from ⅓ to ¼.
 
 Added half-groat and third guinea coins.
 
-Fixed type from "Half Penny" to "Halfpenny".
+Fixed typo from "Half Penny" to "Halfpenny".
 
 Added persistency to enabled and disabled coins.
 
