@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # OldPoundConvert-2.1
  I remake an old program from when I didn't understand how GUIs worked.
 
