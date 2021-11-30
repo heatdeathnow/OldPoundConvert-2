@@ -1,18 +1,25 @@
 # The calculations are done in farthings. That is in quarters of pence.
-denomination = [['Guinea', 1008, True],
+"""
+denomination = [['Guinea', 1008, False],
                 ['Sovereign', 960, True],
-                ['Half Guinea', 504, True],
+                ['Half Guinea', 504, False],
                 ['Half Sovereign', 480, True],
+                ['Third Guinea', 336, True],
                 ['Crown', 240, True],
-                ['Half Crown', 120, True],
+                ['Half Crown', 120, False],
                 ['Florin', 96, True],
-                ['Shilling', 48, True],
-                ['Sixpence', 24, True],
+                ['Shilling', 48, False],
+                ['Sixpence', 24, False],
                 ['Groat', 16, True],
                 ['Threepence', 12, True],
-                ['Penny', 4, True],
-                ['Half Penny', 2, True],
+                ['Half-groat', 8, True],
+                ['Penny', 4, False],
+                ['Halfpenny', 2, True],
                 ['Farthing', 1, True]]
+"""
+import permanency
+
+denomination = permanency.pull()
 
 # Value of the pound, shilling and pence in farthings.
 exchange = (('£', 960),
@@ -29,27 +36,32 @@ def coins_to_value(list):
     # This will ignore letters, unfilled entries, negative numbers, and floats.
     # The format of the list: [['coin_name', amount], . . ., ['coin_name', amount]]
 
-    count = 0
     value = 0
     for coin in list:
-        value += coin[1] * enabled[count][1]
-        count += 1
+
+        count = 0
+        while True:
+            if coin[0] == denomination[count][0]:
+                value += coin[1] * denomination[count][1]
+                break
+            count += 1
 
     return value
 
 
 def value_to_coins(farthings):
     total_coinage = []
-    for dem in enabled:
+    for dem in denomination:
 
-        quantity = 0
-        while farthings >= dem[1]:
-            quantity += 1
-            farthings -= dem[1]
+        if dem[2]:
+            quantity = 0
+            while farthings >= dem[1]:
+                quantity += 1
+                farthings -= dem[1]
 
-        if quantity > 0:
-            amount = [dem[0], quantity]
-            total_coinage.append(amount)
+            if quantity > 0:
+                amount = [dem[0], quantity]
+                total_coinage.append(amount)
 
     return total_coinage
 
@@ -86,7 +98,7 @@ def farthings_to_readable(farthings):
             pence = ''
 
     elif farthings == 1:
-        fraction = '⅓'
+        fraction = '¼'
         farthings -= 1
         if pence == '0':
             pence = ''

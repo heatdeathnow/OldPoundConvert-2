@@ -102,7 +102,6 @@ class ConvertValueToCoin(ttk.Frame):
         self.button.grid(column=1, row=2, pady=20, ipadx=5, ipady=5)
 
     def display(self):
-
         pounds, shillings, pence = get_value(self.pound_entry, self.shilling_entry, self.pence_entry)
         farthings = calculate.lowest_denomination(pounds, shillings, pence)
         result = calculate.value_to_coins(farthings)
@@ -119,7 +118,7 @@ class ConvertCoinsToValue(ttk.Frame):
         # This makes an indeterminate amount of labels and entries for an indeterminate amount of enabled coins.
         # All the entries have a specific number that refers to them.
         self.inner_frames = []
-        count = 0
+        count, enabled = 0, 0
         self.entry = []
         self.label = []
         for coin in calculate.denomination:
@@ -127,12 +126,13 @@ class ConvertCoinsToValue(ttk.Frame):
                 self.inner_frame = ttk.Frame(self)
                 self.label.append(ttk.Label(self.inner_frame, text=coin[0]))
                 self.entry.append(ttk.Entry(self.inner_frame))
-                self.label[count].pack()
-                self.entry[count].pack()
+                self.label[enabled].pack()
+                self.entry[enabled].pack()
 
                 self.inner_frames.append(self.inner_frame)
-                count += 1
+                enabled += 1
 
+            count += 1
 
         count = 0
         column_count = 0
@@ -169,7 +169,7 @@ class SimplifyCoin(ttk.Frame):
 
         self.fake_frame = ttk.Frame(self)
         self.inner_frames = []
-        count = 0
+        count, enabled = 0, 0
         self.entry = []
         self.label = []
         for coin in calculate.denomination:
@@ -177,11 +177,13 @@ class SimplifyCoin(ttk.Frame):
                 inner_frame = ttk.Frame(self.fake_frame)
                 self.label.append(ttk.Label(inner_frame, text=calculate.denomination[count][0]))
                 self.entry.append(ttk.Entry(inner_frame))
-                self.label[count].pack()
-                self.entry[count].pack()
+                self.label[enabled].pack()
+                self.entry[enabled].pack()
 
                 self.inner_frames.append(inner_frame)
-                count += 1
+                enabled += 1
+
+            count += 1
 
         count = 0
         column_count = 0
@@ -256,39 +258,39 @@ class SimplifyValue(ttk.Frame):
 
 class Settings(ttk.Frame):
 
-    def toggle(self, coin):
-        count = 0
-        print(coin)
-
-        for thing in calculate.denomination:
-            if coin == thing:
-                calculate.denomination[count][2] = not calculate.denomination[count][2]
-            count += 1
-
-        self.buttons[count - 1]['text'] = f"Disable {coin[0]}" if calculate.denomination[count - 1][2] \
-            else f"Enable {coin[0]}"
-
     def __init__(self, root):
         super().__init__(root)
 
-        count = 0
-        self.buttons = []
+        self.button = []
+        count, row_count, column_count = 0, 0, 0
         for coin in calculate.denomination:
 
             if coin[2]:
-                a = coin.copy()
-                self.buttons.append(ttk.Button(self, text=f"Disable {coin[0]}", command=lambda: self.toggle(a)))
+                self.button.append(ttk.Button(self, text=f"Disable {coin[0]}",
+                                         command=lambda a=coin: self.toggle(a)))
+                self.button[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
             else:
-                self.buttons.append(ttk.Button(self, text=f"Enable {coin[0]}", command=lambda: self.toggle(coin.copy())))
+                self.button.append(ttk.Button(self, text=f"Enable {coin[0]}",
+                                         command=lambda a=coin: self.toggle(a)))
+                self.button[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
+
+            count += 1
+            row_count += 1
+            if row_count == 6:
+                row_count = 0
+                column_count += 1
+
+    def toggle(self, coin):
+        count = 0
+
+        for match in calculate.denomination:
+            if coin[0] == match[0]:
+                calculate.denomination[count][2] = not calculate.denomination[count][2]
+                break
+
             count += 1
 
-        row_count = 0
-        column_count = 0
-        for button in self.buttons:
-            button.grid(column=column_count, row=row_count, padx=5, pady=5, sticky=tk.W)
-            row_count += 1
-
-            if row_count == 6:
-                column_count += 1
-                row_count = 0
-
+        if calculate.denomination[count][2]:
+            self.button[count]['text'] = f"Disable {calculate.denomination[count][0]}"
+        else:
+            self.button[count]['text'] = f"Enable {calculate.denomination[count][0]}"
