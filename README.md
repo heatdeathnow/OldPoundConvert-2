@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OldPoundConvert-2.1
  I remake an old program from when I didn't understand how GUIs worked.
 
@@ -20,3 +21,4 @@ Added hardcoded values to coins in case the conf CSV file is deleted.
 # Lacking features
 
 More conversion options.
+
