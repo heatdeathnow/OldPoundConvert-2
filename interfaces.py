@@ -1,6 +1,8 @@
 import tkinter as tk
+from tkinter.messagebox import showinfo
 from tkinter import ttk
 import calculate
+import permanency
 
 
 def format_coins(coins):
@@ -102,12 +104,21 @@ class ConvertValueToCoin(ttk.Frame):
         self.button.grid(column=1, row=2, pady=20, ipadx=5, ipady=5)
 
     def display(self):
-        pounds, shillings, pence = get_value(self.pound_entry, self.shilling_entry, self.pence_entry)
-        farthings = calculate.lowest_denomination(pounds, shillings, pence)
-        result = calculate.value_to_coins(farthings)
 
-        text = format_coins(result)
-        self.result_label['text'] = text
+        warn = True
+        for test in calculate.denomination:
+            if test[2]:
+                warn = False
+
+        if not warn:
+            pounds, shillings, pence = get_value(self.pound_entry, self.shilling_entry, self.pence_entry)
+            farthings = calculate.lowest_denomination(pounds, shillings, pence)
+            result = calculate.value_to_coins(farthings)
+
+            text = format_coins(result)
+            self.result_label['text'] = text
+        else:
+            showinfo(title="No coins enabled", message='All the coins have been turned off!')
 
 
 class ConvertCoinsToValue(ttk.Frame):
@@ -121,8 +132,11 @@ class ConvertCoinsToValue(ttk.Frame):
         count, enabled = 0, 0
         self.entry = []
         self.label = []
+        warn = True
         for coin in calculate.denomination:
             if coin[2]:  # If the coin is enabled
+                warn = False
+
                 self.inner_frame = ttk.Frame(self)
                 self.label.append(ttk.Label(self.inner_frame, text=coin[0]))
                 self.entry.append(ttk.Entry(self.inner_frame))
@@ -150,6 +164,9 @@ class ConvertCoinsToValue(ttk.Frame):
         self.button = ttk.Button(self, text='Convert', command=self.display)
         self.button.grid(column=2, row=1000, padx=10)
 
+        if warn:
+            showinfo(title="No coins enabled", message='All the coins have been turned off!')
+
     def display(self):
 
         list = get_coins(self.entry, self.label)
@@ -170,10 +187,13 @@ class SimplifyCoin(ttk.Frame):
         self.fake_frame = ttk.Frame(self)
         self.inner_frames = []
         count, enabled = 0, 0
+        warn = True
         self.entry = []
         self.label = []
         for coin in calculate.denomination:
             if coin[2]:
+                warn = False
+
                 inner_frame = ttk.Frame(self.fake_frame)
                 self.label.append(ttk.Label(inner_frame, text=calculate.denomination[count][0]))
                 self.entry.append(ttk.Entry(inner_frame))
@@ -202,6 +222,9 @@ class SimplifyCoin(ttk.Frame):
 
         self.button = ttk.Button(self, text='Simplify', command=self.simplify)
         self.button.grid(column=0, row=1, padx=5, pady=5)
+
+        if warn:
+            showinfo(title="No coins enabled", message='All the coins have been turned off!')
 
     def simplify(self):
         coins = get_coins(self.entry, self.label)
@@ -256,7 +279,7 @@ class SimplifyValue(ttk.Frame):
         self.result_label['text'] = readable
 
 
-class Settings(ttk.Frame):
+class SettingsOld(ttk.Frame):
 
     def __init__(self, root):
         super().__init__(root)
@@ -267,11 +290,11 @@ class Settings(ttk.Frame):
 
             if coin[2]:
                 self.button.append(ttk.Button(self, text=f"Disable {coin[0]}",
-                                         command=lambda a=coin: self.toggle(a)))
+                                              command=lambda a=coin: self.toggle(a)))
                 self.button[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
             else:
                 self.button.append(ttk.Button(self, text=f"Enable {coin[0]}",
-                                         command=lambda a=coin: self.toggle(a)))
+                                              command=lambda a=coin: self.toggle(a)))
                 self.button[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
 
             count += 1
@@ -294,3 +317,132 @@ class Settings(ttk.Frame):
             self.button[count]['text'] = f"Disable {calculate.denomination[count][0]}"
         else:
             self.button[count]['text'] = f"Enable {calculate.denomination[count][0]}"
+
+
+class Settings(ttk.Frame):
+
+    def __init__(self, root):
+        super().__init__(root)
+
+        self.checks = []
+        self.variables = []
+        count, row_count, column_count = 0, 0, 0
+        for coin in calculate.denomination:
+
+            if coin[2]:
+                self.variables.append(tk.IntVar(self))
+                self.checks.append(ttk.Checkbutton(self, text=f"{coin[0]}", onvalue=1, offvalue=0,
+                                                   variable=self.variables[count]))
+                self.checks[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
+                self.variables[count].set(1)
+            else:
+                self.variables.append(tk.IntVar(self))
+                self.checks.append(ttk.Checkbutton(self, text=f"{coin[0]}", onvalue=1, offvalue=0,
+                                                   variable=self.variables[count]))
+                self.checks[count].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
+
+            count += 1
+            row_count += 1
+            if row_count == 6:
+                row_count = 0
+                column_count += 1
+
+        enable_button = ttk.Button(self, text='Enable all', command=self.enable_all)
+        enable_button.grid(row=7, column=0, padx=5, pady=5, sticky=tk.W)
+
+        disable_button = ttk.Button(self, text='Disable all', command=self.disable_all)
+        disable_button.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
+
+        save_button = ttk.Button(self, text='Save', command=self.save)
+        save_button.grid(row=7, column=2, padx=5, pady=5, sticky=tk.W)
+
+    def enable_all(self):
+        for variable in self.variables:
+            variable.set(1)
+
+    def disable_all(self):
+        for variable in self.variables:
+            variable.set(0)
+
+    def save(self):
+        count = 0
+
+        for variable in self.variables:
+            if variable.get() == 1:
+                calculate.denomination[count][2] = True
+            else:
+                calculate.denomination[count][2] = False
+
+            count += 1
+
+        permanency.push()
+
+
+class Specific(ttk.Frame):
+
+    def convert(self):
+
+        result = float(self.Entry.get()) * float(self.coin_1.get()) / float(self.coin_2.get())
+
+        self.result_label['text'] = round(result, 2)
+
+    def __init__(self, root):
+        super().__init__(root)
+
+        self.coin_1 = tk.IntVar(self)
+        self.frame_1 = ttk.Frame(self)
+
+        self.radio_list_1 = []
+        enabled, row_count, column_count = 0, 0, 0
+        for coin in calculate.denomination:
+            if coin[2]:
+                self.radio_list_1.append(ttk.Radiobutton(self.frame_1, text=f'{coin[0]}', value=coin[1],
+                                                         variable=self.coin_1))
+                self.radio_list_1[enabled].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
+                enabled += 1
+
+                row_count += 1
+                if row_count == 6:
+                    row_count = 0
+                    column_count += 1
+
+        self.label_1 = ttk.Label(self, text='Convert this...')
+
+        self.Entry = ttk.Entry(self)
+
+        self.label_1.grid(column=0, row=0, padx=5, pady=5)
+        self.frame_1.grid(column=0, row=1)
+        self.Entry.grid(column=0, row=2)
+
+        # Invisible separator label
+        self.invisible_label = ttk.Label(self)
+        self.invisible_label.grid(column=1, row=1, padx=50)
+
+        self.coin_2 = tk.IntVar(self)
+        self.frame_2 = ttk.Frame(self)
+
+        self.radio_list_2 = []
+        enabled, row_count, column_count = 0, 0, 0
+        for coin in calculate.denomination:
+            if coin[2]:
+                self.radio_list_2.append(ttk.Radiobutton(self.frame_2, text=f'{coin[0]}', value=coin[1],
+                                                         variable=self.coin_2))
+                self.radio_list_2[enabled].grid(row=row_count, column=column_count, padx=5, pady=5, sticky=tk.W)
+                enabled += 1
+
+                row_count += 1
+                if row_count == 6:
+                    row_count = 0
+                    column_count += 1
+
+        self.label_2 = ttk.Label(self, text='... to this.')
+
+        self.label_2.grid(column=2, row=0, padx=5, pady=5)
+        self.frame_2.grid(column=2, row=1)
+
+        self.button = ttk.Button(self, text="Convert",
+                                 command=lambda: self.convert())
+        self.button.grid(row=3, column=1, padx=5, pady=5)
+
+        self.result_label = ttk.Label(self)
+        self.result_label.grid(row=3, column=2, padx=5, pady=5)

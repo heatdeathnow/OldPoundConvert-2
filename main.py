@@ -35,6 +35,10 @@ class MainFrame(ttk.Frame):
                                              command=lambda: clutch(self, interfaces.ConvertValueToCoin, container))
         self.valuetocoin_button.grid(column=1, row=1, padx=5, pady=5)
 
+        self.specific_button = ttk.Button(self, text=f"Convert specific coin\n     to another coin",
+                                          command=lambda: clutch(self, interfaces.Specific, container))
+        self.specific_button.grid(column=0, row=2, padx=5, pady=5, columnspan=2)
+
 
 class App(tk.Tk):
 
@@ -47,8 +51,8 @@ class App(tk.Tk):
         self.title("Old Currency Converter - 2")
         self.iconbitmap("icon.ico")
 
-        main_frame = MainFrame(self)
-        main_frame.grid(column=0, row=0, columnspan=2)
+        self.main_frame = MainFrame(self)
+        self.main_frame.grid(column=0, row=0, columnspan=2)
 
         back_button = ttk.Button(self, text='Menu',
                                  command=lambda: clutch(current_frame, MainFrame, self))
@@ -63,5 +67,5 @@ class App(tk.Tk):
 
 
 app = App()
-current_frame = ttk.Frame()
+current_frame = app.main_frame
 app.mainloop()

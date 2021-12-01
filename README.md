@@ -1,22 +1,15 @@
-<<<<<<< HEAD
-# OldPoundConvert-2.1
+# OldPoundConvert-2.2
  I remake an old program from when I didn't understand how GUIs worked.
 
 
 # Changes
-Fixed the issues with the second window popping up.
+Fixed unknown bug preventing a frame from being deleted, making it always stay on the background.
 
-Added the ability to enabled and disable coins from the calculations.
+Changed the buttons at the settings' screen to checkboxes and reworked it.
 
-Changed the incorrect fraction from ⅓ to ¼.
+Added new conversion option from specific coins.
 
-Added half-groat and third guinea coins.
-
-Fixed type from "Half Penny" to "Halfpenny".
-
-Added persistency to enabled and disabled coins.
-
-Added hardcoded values to coins in case the conf CSV file is deleted.
+Added warning pop up if the program is used with all coins disabled.
 
 # Lacking features
 
